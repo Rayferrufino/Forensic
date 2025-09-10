@@ -4,8 +4,8 @@ PowerShell.exe -ExecutionPolicy Bypass -File "path\to\your\ForensicCollector.ps1
 ```
 
 ### Fully functional Windows artifact collector.
-PowerShell.exe -ExecutionPolicy Bypass -File "path\to\your\script.ps1"
-Collect and export on csv files the following artifacts. Make sure output files is generated in the same current folder where the script is invoked
+| Artifacts | 
+| -------- | 
 NTFS File System Overview 
 Document and File Metadata 
 Volume Shadow Copies 
