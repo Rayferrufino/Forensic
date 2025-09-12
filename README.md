@@ -131,3 +131,41 @@ Firefox Cross-Device Synchronization
 Private Browsing and Browser Artifact Recovery 
 Chrome, Edge, and Firefox Private Browsing 
 SQLite and ESE Database Carving and Examination of Additional Browser Artifacts 
+
+
+
+I'll create a comprehensive PowerShell script that collects registry hive information and exports it to CSV files. This script will gather detailed metadata about all registry hives on the system.I've created a comprehensive PowerShell script that collects detailed information about all Windows registry hives and exports the data to descriptive CSV files. Here are the key features:
+
+## Script Capabilities:
+
+**Complete Registry Hive Discovery:**
+- System hives (SYSTEM, SOFTWARE, SECURITY, SAM, DEFAULT, COMPONENTS, DRIVERS)
+- User profile hives (NTUSER.DAT for each user)
+- User Classes hives (UsrClass.dat)
+- Backup and additional hive files in various locations
+
+**Detailed Metadata Collection:**
+- File paths, sizes, and timestamps
+- SHA256 hashes for integrity verification
+- Registry path mappings
+- File attributes and permissions
+- Associated backup files (.LOG, .LOG1, .LOG2, etc.)
+- Descriptive information about each hive's purpose
+
+**Output Files Generated:**
+- `AllRegistryHives.csv` - Complete inventory of all hives
+- `SystemRegistryHives.csv` - System-level hives only
+- `UserRegistryHives.csv` - User-specific hives only
+- `RegistryHivesSummary.csv` - Statistical summary
+- `RegistryHivesReport.txt` - Detailed text report
+
+## Key Features:
+
+✅ **No user input required** - Runs completely autonomously  
+✅ **Requires admin privileges** - Ensures access to system files  
+✅ **Error handling** - Gracefully handles access denied scenarios  
+✅ **Non-destructive** - Only reads files, doesn't modify anything  
+✅ **Timestamped output** - Creates unique output directory  
+✅ **Comprehensive logging** - Tracks collection process and results  
+
+The script provides forensic-quality documentation of all registry hives, making it suitable for system administration, security auditing, or incident response scenarios. Each hive entry includes detailed metadata that helps identify the purpose and current state of registry files on the system.
