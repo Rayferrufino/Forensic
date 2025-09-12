@@ -133,8 +133,7 @@ Chrome, Edge, and Firefox Private Browsing
 SQLite and ESE Database Carving and Examination of Additional Browser Artifacts 
 
 
-
-I'll create a comprehensive PowerShell script that collects registry hive information and exports it to CSV files. This script will gather detailed metadata about all registry hives on the system.I've created a comprehensive PowerShell script that collects detailed information about all Windows registry hives and exports the data to descriptive CSV files. Here are the key features:
+------------------------------------------------------------------------------
 
 ## Script Capabilities:
 
@@ -168,4 +167,4 @@ I'll create a comprehensive PowerShell script that collects registry hive inform
 ✅ **Timestamped output** - Creates unique output directory  
 ✅ **Comprehensive logging** - Tracks collection process and results  
 
-The script provides forensic-quality documentation of all registry hives, making it suitable for system administration, security auditing, or incident response scenarios. Each hive entry includes detailed metadata that helps identify the purpose and current state of registry files on the system.
+
