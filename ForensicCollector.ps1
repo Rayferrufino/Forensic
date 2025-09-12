@@ -110,8 +110,7 @@ $timeZone = Get-TimeZone | Select-Object Id, DisplayName, StandardName, Daylight
 Export-ForensicCSV -Data $timeZone -FileName "TimeZone_Info" -Description "Time Zone Information"
 
 # Control Set Information
-$controlSet = Get-ItemProperty "HKLM:\SYSTEM\Select" | Select-Object Current, Default, Failed, LastKnownGood
-Export-ForensicCSV -Data $controlSet -FileName "Control_Set" -Description "Control Set Configuration"
+$controlSet = Get-ItemProperty "HKLM:\SYSTEM\Select" | Select-Object Current, Default, Failed, LastKnownGood Export-ForensicCSV -Data $controlSet -FileName "Control_Set" -Description "Control Set Configuration"
 
 # ==============================================================================
 # USER ACCOUNTS AND SECURITY
