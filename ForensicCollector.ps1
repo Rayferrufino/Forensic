@@ -100,10 +100,7 @@ $systemInfo = Get-CimInstance Win32_OperatingSystem | Select-Object @{
     SystemDirectory, WindowsDirectory
 Export-ForensicCSV -Data $systemInfo -FileName "System_Information" -Description "System Information"
 
-$computerSystem = Get-CimInstance Win32_ComputerSystem | Select-Object 
-    Manufacturer, Model, Domain, DomainRole, 
-    @{Name='TotalPhysicalMemoryGB'; Expression={[math]::Round($_.TotalPhysicalMemory/1GB,2)}},
-    NumberOfProcessors, NumberOfLogicalProcessors, SystemType
+$computerSystem = Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer, Model, Domain, DomainRole, @{Name='TotalPhysicalMemoryGB'; Expression={[math]::Round($_.TotalPhysicalMemory/1GB,2)}}, NumberOfProcessors, NumberOfLogicalProcessors, SystemType
 Export-ForensicCSV -Data $computerSystem -FileName "Computer_System" -Description "Computer System Info"
 
 $timeZone = Get-TimeZone | Select-Object Id, DisplayName, StandardName, DaylightName, BaseUtcOffset
