@@ -1,6 +1,6 @@
 # Forensic
 ```powershell
-PowerShell.exe -ExecutionPolicy Bypass -File "path\to\your\ForensicCollector.ps1" -Timeout="6000"
+PowerShell.exe -ExecutionPolicy Bypass -File "path\to\your\ForensicCollector.ps1" -Timeout="60000"
 ```
 
 ### Fully functional Windows artifact collector.
