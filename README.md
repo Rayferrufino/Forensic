@@ -135,36 +135,5 @@ SQLite and ESE Database Carving and Examination of Additional Browser Artifacts
 
 ------------------------------------------------------------------------------
 
-## Script Capabilities:
-
-**Complete Registry Hive Discovery:**
-- System hives (SYSTEM, SOFTWARE, SECURITY, SAM, DEFAULT, COMPONENTS, DRIVERS)
-- User profile hives (NTUSER.DAT for each user)
-- User Classes hives (UsrClass.dat)
-- Backup and additional hive files in various locations
-
-**Detailed Metadata Collection:**
-- File paths, sizes, and timestamps
-- SHA256 hashes for integrity verification
-- Registry path mappings
-- File attributes and permissions
-- Associated backup files (.LOG, .LOG1, .LOG2, etc.)
-- Descriptive information about each hive's purpose
-
-**Output Files Generated:**
-- `AllRegistryHives.csv` - Complete inventory of all hives
-- `SystemRegistryHives.csv` - System-level hives only
-- `UserRegistryHives.csv` - User-specific hives only
-- `RegistryHivesSummary.csv` - Statistical summary
-- `RegistryHivesReport.txt` - Detailed text report
-
-## Key Features:
-
-✅ **No user input required** - Runs completely autonomously  
-✅ **Requires admin privileges** - Ensures access to system files  
-✅ **Error handling** - Gracefully handles access denied scenarios  
-✅ **Non-destructive** - Only reads files, doesn't modify anything  
-✅ **Timestamped output** - Creates unique output directory  
-✅ **Comprehensive logging** - Tracks collection process and results  
 
 
