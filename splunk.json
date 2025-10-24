@@ -1,0 +1,407 @@
+{
+    "visualizations": {
+        "viz_gWYFyPPK": {
+            "type": "splunk.singlevalue",
+            "options": {
+                "majorColor": "> majorValue | rangeValue(convertedColorRange)"
+            },
+            "context": {
+                "convertedColorRange": [
+                    {
+                        "from": 0,
+                        "value": "#53a051"
+                    },
+                    {
+                        "to": 0,
+                        "value": "#dc4e41"
+                    }
+                ]
+            },
+            "dataSources": {
+                "primary": "ds_Gr39TLUi"
+            },
+            "title": "Emails found with $sender_token$$recipient_token$$subject_token$$messageid_token$$attachment_token$ in ProofPoint",
+            "showProgressBar": true
+        },
+        "viz_UADw1nDR": {
+            "type": "splunk.table",
+            "options": {
+                "drilldown": "cell",
+                "showInternalFields": false
+            },
+            "dataSources": {
+                "primary": "ds_Kj43Kwkh"
+            },
+            "title": "O365 Quarantine Results",
+            "showProgressBar": true,
+            "description": "Emails found with $sender_token$$recipient_token$$subject_token$$messageid_token$$attachment_token$ in O365 Quarantine (Attachment Search Unavailable)"
+        },
+        "viz_LKWLdd0i": {
+            "type": "splunk.table",
+            "options": {
+                "count": 20,
+                "dataOverlayMode": "none",
+                "drilldown": "none",
+                "showRowNumbers": false,
+                "showInternalFields": false
+            },
+            "dataSources": {
+                "primary": "ds_xnKjUV5L"
+            },
+            "title": "ProofPoint Mail Search",
+            "showProgressBar": true,
+            "description": "Purpose: Search email indicators for delivered emails from External senders only"
+        },
+        "viz_tDZhSEgO": {
+            "type": "splunk.column",
+            "options": {
+                "y": "> primary | frameBySeriesNames('count')",
+                "annotationLabel": "> annotation | seriesByName('_time')",
+                "annotationX": "> annotation | seriesByName('_time')",
+                "yAxisTitleText": "Emails",
+                "xAxisTitleText": "Date",
+                "dataValuesDisplay": "all"
+            },
+            "dataSources": {
+                "primary": "ds_Graph"
+            },
+            "title": "Timeline of Emails Sent in Specified Timeframe"
+        },
+        "viz_awl5l1Uw": {
+            "type": "splunk.singlevalue",
+            "options": {},
+            "dataSources": {
+                "primary": "ds_mSl1Mc3O"
+            },
+            "title": "Number of Emails Discarded in ProofPoint",
+            "showProgressBar": true
+        },
+        "viz_MedurhlN": {
+            "type": "splunk.table",
+            "title": "0365 Exchange Delivered Emails (Includes NBCU to NBCU emails)",
+            "showProgressBar": "true",
+            "dataSources": {
+                "primary": "ds_DKhHbC2q"
+            },
+            "description": "Purpose: Search email delivered to an O365 Mailbox (Attachment Search Unavailable)"
+        },
+        "viz_b8YUR2FP": {
+            "type": "splunk.table",
+            "dataSources": {
+                "primary": "ds_f5y3MmH1"
+            },
+            "showProgressBar": true,
+            "title": "On-Prem Exchange Emails",
+            "description": "Purpose: Search email delivered to an on-prem Exchange mailbox (Attachment Search Unavailable)"
+        },
+        "viz_BhE3rsXp": {
+            "type": "splunk.table",
+            "title": "Download PP CSV for CTR Pull",
+            "dataSources": {
+                "primary": "ds_CqkOOxws"
+            },
+            "showProgressBar": true,
+            "description": "Purpose: Search and columns formatted for CTR CSV Pull"
+        },
+        "viz_GBTkrSvw": {
+            "type": "splunk.table",
+            "dataSources": {
+                "primary": "ds_bnsQwRq2"
+            },
+            "showProgressBar": true,
+            "title": "ProofPoint TAP Alerts",
+            "description": "Search email indicators for vendor detections of malicious email from External senders (Attachment Search Unavailable)"
+        }
+    },
+    "dataSources": {
+        "ds_Gr39TLUi": {
+            "type": "ds.search",
+            "options": {
+                "query": "index=proofpoint sourcetype=pps_messagelog \n(envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (msg.normalizedHeader.subject{}=\"*$subject_token$*\") AND (msg.header.message-id{}=\"*$messageid_token$*\") AND (file_name=\"*$attachment_token$*\" OR file_hash_sha256=\"*$attachment_token$*\") AND (final_rule!=*scanning*) \n|  mvexpand envelope_recipient \n | dedup message_id envelope_recipient final_action   \n| stats count",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "Emails found with $sender_token$ as Sender 1 search"
+        },
+        "ds_Graph": {
+            "type": "ds.search",
+            "options": {
+                "query": "index=proofpoint sourcetype=pps_messagelog \n(envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (msg.normalizedHeader.subject{}=\"*$subject_token$*\") AND (msg.header.message-id{}=\"*$messageid_token$*\") AND (final_rule!=*scanning*) AND (file_name=\"*$attachment_token$*\" OR file_hash_sha256=\"*$attachment_token$*\")  \n | mvexpand envelope_recipient \n| dedup message_id envelope_recipient final_action \n|bucket _time span=day \n|stats count by _time",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "enableSmartSources": true
+            },
+            "name": "Emails TimeChart"
+        },
+        "ds_xnKjUV5L": {
+            "type": "ds.search",
+            "options": {
+                "query": "index=proofpoint sourcetype=pps_messagelog AND (envelope_recipient!=\"cyber.spam@nbcuni.com\" OR envelope_recipient!=\"phishalarm.analyzer@nbcuni.com\" OR envelope_recipient!=\"cyber@nbcuni.com\")\n(envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (msg.normalizedHeader.subject{}=\"*$subject_token$*\") AND (msg.header.message-id{}=\"*$messageid_token$*\") AND (file_name=\"***\" OR file_hash_sha256=\"***\")\n |mvexpand envelope_recipient  \n | dedup message_id envelope_recipient final_action \n | lookup idwarehouse \"mail\" as \"envelope_recipient\" OUTPUT userType sso jobTitle parentOrgname orgSegment\n | search envelope_recipient!=\"cyber.spam@nbcuni.com\"  envelope_recipient!=\"phishalarm.analyzer@nbcuni.com\" envelope_recipient!=\"cyber@nbcuni.com\"\n | table _time  msg.normalizedHeader.message-id{} action final_action final_module final_rule filter.actions.rule src_ip message_from envelope_sender sender_domain envelope_recipient recipient_domain message_to msg.normalizedHeader.subject{} userType sso jobTitle parentOrgname orgSegment file_name  |  rename msg.normalizedHeader.message-id{} AS \"Message ID\" src_ip AS \"Source IP\" envelope_recipient AS \"Email Recipient\" jobTitle AS \"Job Title\" parentOrgname AS \"Org\" msg.normalizedHeader.subject{} as Subject\n | sort -_time",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "Table search"
+        },
+        "ds_Kj43Kwkh": {
+            "type": "ds.search",
+            "options": {
+                "query": "(index=azure OR index=azure) (sourcetype=ms:o365:reporting:messagetrace OR sourcetype=ms:o365:management:activity)\nStatus=Quarantined SenderAddress=\"*$sender_token$*\" AND RecipientAddress=\"*$recipient_token$*\" AND Subject=\"*$subject_token$*\" AND message_id=\"*$messageid_token$*\" AND size = \"*$attachment_token$*\"  \n | dedup RecipientAddress message_id\n| lookup idwarehouse \"mail\" as \"RecipientAddress\" OUTPUT jobTitle parentOrgname\n| table _time action message_id RecipientAddress SenderAddress Subject jobTitle parentOrgname ",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "name": "O365 Quarantine Results - Emails found with ($sender_token$AND$recipient_token$) in O365 Quarantine search"
+        },
+        "ds_mSl1Mc3O": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "index=proofpoint sourcetype=pps_messagelog \n(envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (msg.normalizedHeader.subject{}=\"*$subject_token$*\") AND (msg.header.message-id{}=\"*$messageid_token$*\")  AND (file_name=\"*$attachment_token$*\" OR file_hash_sha256=\"*$attachment_token$*\") AND (final_action = discard)  AND (action = deleted) AND (action != continue) AND (final_rule!=*scanning*) AND (final_action != delivered) \n | mvexpand envelope_recipient \n| dedup message_id envelope_recipient final_action \n |  stats count"
+            },
+            "name": "Discarded Emails"
+        },
+        "ds_DKhHbC2q": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "index=azure sourcetype=\"ms:o365:reporting:messagetrace\" Status=Delivered SenderAddress=\"*$sender_token$*\" AND  RecipientAddress=\"*$recipient_token$*\"  AND Subject=\"*$subject_token$*\" AND message_id=\"*$messageid_token$*\" AND size =\"*$attachment_token$*\"\n| eval message_from = lower(SenderAddress) \n| eval message_to = lower(RecipientAddress) \n| lookup idwarehouse mail AS message_to OUTPUT \"orgSegment\" \"ssoStatus\" \n| table _time subject message_from message_to orgSegment message_id  \n| rename _time AS Time subject AS Subject message_from AS Sender message_to AS Recipient orgSegment AS \"Org Segment\" message_id AS \"Message ID\"\n| convert ctime(Time) \n| sort - Time"
+            },
+            "name": "O365 Delivered Emails"
+        },
+        "ds_f5y3MmH1": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "(index=*msexchange* sourcetype=MSExchange:*:MessageTracking event_id=DELIVER) direction=Incoming sender=\"*$sender_token$*\" AND recipient=\"*$recipient_token$*\" AND subject=\"*$subject_token$*\" AND message_id=\"*$messageid_token$*\" AND sourcetype = \"*$attachment_token$*\" \n| eval sender = lower(sender) \n| where !sender like \"%@nbcuni.com\" \n| eval recipient_list = lower(recipient_list) \n| lookup idwarehouse mail AS envelope_recipient OUTPUT \"orgSegment\" \"ssoStatus\"\n| table _time subject message_from  envelope_recipient orgSegment message_id  \n| rename _time AS Time subject AS Subject message_from AS Sender envelope_recipient AS Recipient orgSegment AS \"Org Segment\" message_id AS \"Message ID\"\n| convert ctime(Time) \n| sort - Time"
+            },
+            "name": "On-Prem Exchange Emails"
+        },
+        "ds_CqkOOxws": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "index=proofpoint sourcetype=pps_messagelog (envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (msg.normalizedHeader.subject{}=\"*$subject_token$*\") AND (msg.header.message-id{}=\"*$messageid_token$*\") AND (file_name=\"*$attachment_token$*\" OR file_hash_sha256=\"*$attachment_token$*\")\n| where final_action=\"continue\"\n| mvexpand envelope_recipient | table _time msg.normalizedHeader.message-id{} final_action final_rule message_from envelope_sender envelope_recipient message_to msg.normalizedHeader.subject{} | rename msg.normalizedHeader.message-id{} AS \"MessageID\" envelope_recipient AS \"Recipients\" msg.normalizedHeader.subject{} as Subject\n| sort -_time"
+            },
+            "name": "CSV Download"
+        },
+        "ds_bnsQwRq2": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "index=proofpoint sourcetype=proofpoint_tap_siem (envelope_sender=\"*$sender_token$*\" OR message_from=\"*$sender_token$*\") AND (envelope_recipient=\"*$recipient_token$*\" OR message_to=\"*$recipient_token$*\") AND (subject=\"*$subject_token$*\") AND (message_id=\"*$messageid_token$*\") AND (messageSize = \"*$attachment_token$*\") \n| convert ctime(_time)\n| table _time category action sender envelope_sender message_from envelope_recipient subject message_id  threatsInfoMap{}.threat\n| rename _time AS Time category AS Category action AS Action envelope_sender AS \"Envelope Sender\" message_from AS \"Message Sender\" envelope_recipient AS Recipient subject AS Subject message_id AS \"Message ID\" threatsInfoMap{}.threat AS \"Threat\"</query>"
+            },
+            "name": "ProofPoint TAP Alerts"
+        },
+        "ds_Ha48SvVW": {
+            "type": "ds.search",
+            "options": {
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                },
+                "query": "index=proofpoint sourcetype=proofpoint:trap \"PTRAuditData\" (originalMailbox=\"*$recipient_token$*\") AND (message_id=\"*$messageid_token$*\") AND (size = \"*$attachment_token$*\") AND (identity = \"*$sender_token$*\") AND (sourcetype = \"*$subject_token$*\") n| table _time originalMailbox message_id isMessageRead quarantineMailbox\n| rename originalMailbox AS \"Recipient\" message_id AS \"Message ID\" isMessageRead AS \"is Message Read\" quarantineMailbox AS \"Quarantine Mailbox\""
+            },
+            "name": "TRAP Pull (Shelved for future use)"
+        }
+    },
+    "defaults": {
+        "dataSources": {
+            "ds.search": {
+                "options": {
+                    "queryParameters": {}
+                }
+            }
+        }
+    },
+    "inputs": {
+        "input_EE6hNZh4": {
+            "type": "input.text",
+            "options": {
+                "token": "sender_token",
+                "defaultValue": "*"
+            },
+            "title": "Sender"
+        },
+        "input_yiIsQhVj": {
+            "type": "input.timerange",
+            "options": {
+                "token": "global_time",
+                "defaultValue": "-30d@d,now"
+            },
+            "title": ""
+        },
+        "input_M7X2wJR0": {
+            "options": {
+                "defaultValue": "*",
+                "token": "recipient_token"
+            },
+            "title": "Recipient",
+            "type": "input.text"
+        },
+        "input_uZMuYlfh": {
+            "options": {
+                "defaultValue": "*",
+                "token": "subject_token"
+            },
+            "title": "Subject",
+            "type": "input.text"
+        },
+        "input_XAUbB28R": {
+            "options": {
+                "defaultValue": "*",
+                "token": "messageid_token"
+            },
+            "title": "Message ID",
+            "type": "input.text"
+        },
+        "input_K6BjDQUf": {
+            "options": {
+                "defaultValue": "*",
+                "token": "attachment_token"
+            },
+            "title": "Attachment Name/Hash",
+            "type": "input.text"
+        },
+        "input_vtTMnC5T": {
+            "options": {
+                "defaultValue": "Default Text",
+                "token": "text_RsCWOiX0"
+            },
+            "title": "Text Input Title",
+            "type": "input.text"
+        }
+    },
+    "layout": {
+        "type": "grid",
+        "options": {
+            "height": 1000,
+            "width": 1440,
+            "submitButton": true
+        },
+        "structure": [
+            {
+                "item": "viz_gWYFyPPK",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 395,
+                    "h": 198
+                }
+            },
+            {
+                "item": "viz_LKWLdd0i",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 198,
+                    "w": 1440,
+                    "h": 563
+                }
+            },
+            {
+                "item": "viz_BhE3rsXp",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 761,
+                    "w": 1440,
+                    "h": 405
+                }
+            },
+            {
+                "item": "viz_MedurhlN",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 1166,
+                    "w": 730,
+                    "h": 416
+                }
+            },
+            {
+                "item": "viz_UADw1nDR",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 1582,
+                    "w": 1440,
+                    "h": 590
+                }
+            },
+            {
+                "item": "viz_GBTkrSvw",
+                "type": "block",
+                "position": {
+                    "x": 0,
+                    "y": 2172,
+                    "w": 1440,
+                    "h": 564
+                }
+            },
+            {
+                "item": "viz_awl5l1Uw",
+                "type": "block",
+                "position": {
+                    "x": 395,
+                    "y": 0,
+                    "w": 455,
+                    "h": 198
+                }
+            },
+            {
+                "item": "viz_b8YUR2FP",
+                "type": "block",
+                "position": {
+                    "x": 730,
+                    "y": 1166,
+                    "w": 710,
+                    "h": 416
+                }
+            },
+            {
+                "item": "viz_tDZhSEgO",
+                "type": "block",
+                "position": {
+                    "x": 850,
+                    "y": 0,
+                    "w": 590,
+                    "h": 198
+                }
+            }
+        ],
+        "globalInputs": [
+            "input_EE6hNZh4",
+            "input_M7X2wJR0",
+            "input_uZMuYlfh",
+            "input_XAUbB28R",
+            "input_K6BjDQUf",
+            "input_yiIsQhVj",
+            "input_vtTMnC5T"
+        ]
+    },
+    "description": "Email Search/Stats and TRAP CSV Download Dashboard",
+    "title": "Email Indicator Search"
+}
